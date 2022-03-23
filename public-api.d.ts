@@ -5,5 +5,8 @@ export * from './lib/components/prev-situation/prev-situation.component';
 export * from './lib/components/current-situation/current-situation.component';
 export * from './lib/components/expected-situation/expected-situation.component';
 export * from './lib/components/print-layout/print-layout.component';
+export * from './lib/components/img-uploader/img-uploader.component';
+export * from './lib/components/warning-pluvio/warning-pluvio.component';
+export * from './lib/components/warning-idro/warning-idro.component';
 export * from './lib/reporter.config';
 export * from './lib/reporter.module';
