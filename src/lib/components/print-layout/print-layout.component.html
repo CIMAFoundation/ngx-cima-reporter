@@ -1,0 +1,29 @@
+<h2 class="mb-2 mt-3 border-bottom">Layout di Stampa</h2>
+<div class="d-flex">
+
+  <div class="layout-wrapper d-flex flex-column align-items-center justify-content-center me-3"
+       [ngClass]="layoutSelected == 1? 'selected':''"
+       (click)="layoutSelected=1">
+    <img class="img-layout" src="assets/reporter/img/1img.png">
+    <span class="my-1">1 Immagine</span>
+    <div class="selection-bullet"></div>
+  </div>
+
+  <div class="layout-wrapper d-flex flex-column align-items-center justify-content-center me-3"
+       [ngClass]="layoutSelected == 2? 'selected':''"
+       (click)="layoutSelected=2">
+    <img class="img-layout" src="assets/reporter/img/2img.png">
+    <span class="my-1">2 Immagini</span>
+    <div class="selection-bullet"></div>
+  </div>
+
+  <div class="layout-wrapper d-flex flex-column align-items-center justify-content-center me-3"
+       [ngClass]="layoutSelected == 3? 'selected':''"
+       (click)="layoutSelected=3">
+    <img class="img-layout" src="assets/reporter/img/4img.png">
+    <span class="my-1">4 Immagini</span>
+    <div class="selection-bullet"></div>
+  </div>
+
+</div>
+

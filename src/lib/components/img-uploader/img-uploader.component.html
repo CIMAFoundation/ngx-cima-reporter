@@ -1,0 +1,14 @@
+<h3>Immagini</h3>
+<!--file uploaded-->
+<div class="file-wrapper uploaded" *ngFor="let file of fakeData.uploadedFiles">
+  <div class="preview" [style.background-image]="'url('+ file.imgUrl +')'"></div>
+  <div class="title">
+    <a [href]="file.imgUrl" target="_blank">{{file.title}}</a>
+    <span class="del-btn ms-2 fas fa-trash-alt" (click)="delFile(file)"></span>
+  </div>
+</div>
+
+<!--upload-->
+<div class="file-wrapper upload">
+  <input type="file">
+</div>

@@ -1,0 +1,143 @@
+<!--abilitazione-->
+<mat-slide-toggle
+  class=""
+  color=primary [(ngModel)]="sectionEnabled">
+  Includi Situazione Prevista
+</mat-slide-toggle>
+
+
+<div class="section-wrapper" [ngClass]="!sectionEnabled?'section-disabled':''">
+  <!--mappa-->
+  <div class="col-12 my-2">
+    <!--periodo di analisi-->
+    <h2 class="border-bottom mb-3 mt-3">Periodo di Analisi</h2>
+
+    <mat-form-field appearance="fill" class="me-2">
+      <mat-label>da</mat-label>
+      <input matInput type="datetime-local" placeholder="data da">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="me-2">
+      <mat-label>a</mat-label>
+      <input matInput type="datetime-local" placeholder="data a">
+    </mat-form-field>
+
+    <button mat-flat-button color="primary"><span class="fas fa-clock me-1"></span>Now</button>
+
+  </div>
+
+  <!--testo situazione pregressa-->
+  <div class="col-12 my-2">
+    <cima-text-editor [(text)]="textExpected" [config]="config"></cima-text-editor>
+  </div>
+
+  <!--layout stampa-->
+  <div class="col-12 my-2">
+    <reporter-print-layout></reporter-print-layout>
+  </div>
+
+  <!--layer-->
+  <div class="col-12 my-2">
+    <h2 class="border-bottom mb-3 mt-3">Layers</h2>
+    <div class="row">
+
+      <!--PRECIPITAZIONI-->
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <h3>Previsione Precipitazione cum. 6h</h3>
+          <div class="runPrec" *ngFor="let run of runsPrec, let i = index">
+
+            <div class="item-list-big-bull bg-secondary">
+              <span>{{i+1}}</span>
+            </div>
+
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Seleziona run</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let run of fakeData.runs" [value]="run">
+                  {{run}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="del-btn-wrapper ms-2">
+              <span class="del-btn fas fa-trash-alt" *ngIf="i>0" (click)="delRunPrec(run)"></span>
+            </div>
+
+          </div>
+
+          <button mat-flat-button color="primary" class="bg-success" (click)="addRunPrec()"><span class="fas fa-plus me-1"></span>Aggiungi Run Precipitazioni</button>
+
+        </div>
+      </div>
+
+      <!--NEVE-->
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <h3>Previsione Neve cum. 6h</h3>
+          <div class="runPrec" *ngFor="let run of runsSnow, let i = index">
+
+            <div class="item-list-big-bull bg-secondary">
+              <span>{{i+1}}</span>
+            </div>
+
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Seleziona run</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let run of fakeData.runs" [value]="run">
+                  {{run}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="del-btn-wrapper ms-2">
+              <span class="del-btn fas fa-trash-alt" *ngIf="i>0" (click)="delRunSnow(run)"></span>
+            </div>
+
+          </div>
+
+          <button mat-flat-button color="primary" class="bg-success" (click)="addRunSnow()"><span class="fas fa-plus me-1"></span>Aggiungi Run Neve</button>
+
+        </div>
+      </div>
+
+      <!--GEOPOTENZIALI-->
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <h3>Previsione Geopotenziale cum. 6h  (500hpa)</h3>
+          <div class="runPrec" *ngFor="let run of runsGeoPot, let i = index">
+
+            <div class="item-list-big-bull bg-secondary">
+              <span>{{i+1}}</span>
+            </div>
+
+            <mat-form-field appearance="fill" class="w-100">
+              <mat-label>Seleziona run</mat-label>
+              <mat-select>
+                <mat-option *ngFor="let run of fakeData.runs" [value]="run">
+                  {{run}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="del-btn-wrapper ms-2">
+              <span class="del-btn fas fa-trash-alt" *ngIf="i>0" (click)="delRunGeoPot(run)"></span>
+            </div>
+
+          </div>
+
+          <button mat-flat-button color="primary" class="bg-success" (click)="addRunGeoPot()"><span class="fas fa-plus me-1"></span>Aggiungi Run Geopotenziale</button>
+
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <reporter-img-uploader></reporter-img-uploader>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

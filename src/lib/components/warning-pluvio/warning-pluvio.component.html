@@ -1,0 +1,24 @@
+<h3>Warnings Pluviometrici</h3>
+
+<div class="warningPluvio" *ngFor="let warning of warningsPluvio, let i = index">
+
+  <div class="item-list-big-bull bg-secondary">
+    <span>{{i+1}}</span>
+  </div>
+
+  <mat-form-field appearance="fill" class="w-100">
+    <mat-label>Aggregazione</mat-label>
+    <mat-select>
+      <mat-option *ngFor="let aggregazione of fakeData.aggWarning" [value]="aggregazione.value">
+        {{aggregazione.value}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="del-btn-wrapper ms-2">
+    <span class="del-btn fas fa-trash-alt" *ngIf="i>0" (click)="delWarningPluvio(warning)"></span>
+  </div>
+
+</div>
+
+<button mat-flat-button color="primary" class="bg-success" (click)="addWarningPluvio()"><span class="fas fa-plus me-1"></span>Aggiungi Warning Pluvio</button>

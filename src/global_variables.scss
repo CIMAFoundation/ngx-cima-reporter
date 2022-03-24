@@ -1,0 +1,14 @@
+
+$bg-light-color: rgb(249, 248, 248);
+$bg-light-dark-color: rgb(238, 239, 240);
+$bg-active-color: rgb(241, 242, 252);
+$border-color: #edeae9;
+
+:root {
+  --bg-light-color: $bg-light-color;
+  --bg-light-dark-color: $bg-light-dark-color;
+  --bg-active-color: $bg-active-color;
+  --border-color: $border-color;
+}
+
+

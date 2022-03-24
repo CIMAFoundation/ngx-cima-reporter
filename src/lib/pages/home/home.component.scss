@@ -1,0 +1,23 @@
+.stepper-content-wrapper {
+  padding: 1em 0;
+}
+.stepper-content {
+  padding: 1em;
+}
+.map-container {
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+:host {
+  ::ng-deep {
+    .angular-editor-wrapper {
+      background-color: #f5f5f5;
+      border-radius: 5px 5px 0  0;
+    }
+    .mat-button-wrapper {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

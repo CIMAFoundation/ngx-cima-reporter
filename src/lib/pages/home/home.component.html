@@ -1,0 +1,84 @@
+<mat-stepper #stepper [linear]="true">
+
+  <!--lasciare numero al posto dell'icona-->
+  <ng-template matStepperIcon="edit" let-index="index">
+    {{index +1}}
+  </ng-template>
+
+  <!--STEP 1-->
+  <mat-step>
+      <ng-template matStepLabel>Inizializzazione</ng-template>
+    <div class="stepper-content-wrapper">
+
+      <div class="stepper-content">
+        <reporter-initialization></reporter-initialization>
+      </div>
+
+      <div class="d-flex justify-content-end">
+        <button mat-flat-button color="primary" class="me-2" matStepperNext>
+          Successivo<span class="fas fa-angle-right ms-2"></span>
+        </button>
+      </div>
+
+    </div>
+  </mat-step>
+
+
+  <!--STEP 2-->
+  <mat-step>
+    <ng-template matStepLabel>Situazione Pregressa</ng-template>
+    <div class="stepper-content-wrapper">
+
+      <div class="stepper-content">
+        <reporter-prev-situation></reporter-prev-situation>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <button mat-flat-button color="primary" class="me-2" matStepperPrevious>
+          <span class="fas fa-angle-left me-2"></span>Precedente
+        </button>
+        <button mat-flat-button color="primary" class="me-2" matStepperNext>
+          Successivo<span class="fas fa-angle-right ms-2"></span>
+        </button>
+      </div>
+    </div>
+  </mat-step>
+
+
+  <!--STEP 3-->
+  <mat-step>
+    <ng-template matStepLabel>Situazione Attuale</ng-template>
+    <div class="stepper-content-wrapper">
+      <div class="stepper-content">
+       <reporter-current-situation></reporter-current-situation>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button mat-flat-button color="primary" class="me-2" matStepperPrevious>
+          <span class="fas fa-angle-left me-2"></span>Precedente
+        </button>
+        <button mat-flat-button color="primary" class="me-2" matStepperNext>
+          Successivo<span class="fas fa-angle-right ms-2"></span>
+        </button>
+      </div>
+    </div>
+  </mat-step>
+
+  <!--STEP 4-->
+  <mat-step>
+    <ng-template matStepLabel>Situazione Prevista</ng-template>
+    <div class="stepper-content-wrapper">
+      <div class="stepper-content">
+        <reporter-expected-situation></reporter-expected-situation>
+      </div>
+      <div class="d-flex justify-content-between">
+        <button mat-flat-button color="primary" class="me-2" matStepperPrevious>
+          <span class="fas fa-angle-left me-2"></span>Precedente
+        </button>
+        <button mat-flat-button color="primary" class="me-2 bg-success">
+          Genera Report
+        </button>
+      </div>
+    </div>
+  </mat-step>
+
+</mat-stepper>

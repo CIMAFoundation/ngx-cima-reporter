@@ -1,31 +1,11 @@
 {
   "name": "@cima/reporter",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "peerDependencies": {
     "@angular/common": "^13.0.0",
     "@angular/core": "^13.0.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
-  },
-  "module": "fesm2015/cima-reporter.mjs",
-  "es2020": "fesm2020/cima-reporter.mjs",
-  "esm2020": "esm2020/cima-reporter.mjs",
-  "fesm2020": "fesm2020/cima-reporter.mjs",
-  "fesm2015": "fesm2015/cima-reporter.mjs",
-  "typings": "cima-reporter.d.ts",
-  "exports": {
-    "./package.json": {
-      "default": "./package.json"
-    },
-    ".": {
-      "types": "./cima-reporter.d.ts",
-      "esm2020": "./esm2020/cima-reporter.mjs",
-      "es2020": "./fesm2020/cima-reporter.mjs",
-      "es2015": "./fesm2015/cima-reporter.mjs",
-      "node": "./fesm2015/cima-reporter.mjs",
-      "default": "./fesm2020/cima-reporter.mjs"
-    }
-  },
-  "sideEffects": false
+  }
 }

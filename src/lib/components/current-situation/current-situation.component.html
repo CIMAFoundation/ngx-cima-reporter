@@ -1,0 +1,86 @@
+<!--abilitazione-->
+<mat-slide-toggle
+  class=""
+  color=primary [(ngModel)]="sectionEnabled">
+  Includi Situazione Attuale
+</mat-slide-toggle>
+
+
+<div class="section-wrapper" [ngClass]="!sectionEnabled?'section-disabled':''">
+  <!--mappa-->
+  <div class="col-12 my-2">
+    <!--periodo di analisi-->
+    <h2 class="border-bottom mb-3 mt-3">Periodo di Analisi</h2>
+
+    <mat-form-field appearance="fill" class="me-2">
+      <mat-label>da</mat-label>
+      <input matInput type="datetime-local" placeholder="data da">
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="me-2">
+      <mat-label>a</mat-label>
+      <input matInput type="datetime-local" placeholder="data a">
+    </mat-form-field>
+
+    <button mat-flat-button color="primary"><span class="fas fa-clock me-1"></span>Now</button>
+
+  </div>
+
+  <!--testo situazione pregressa-->
+  <div class="col-12 my-2">
+    <cima-text-editor [(text)]="textCurrent" [config]="config"></cima-text-editor>
+  </div>
+
+  <!--layout stampa-->
+  <div class="col-12 my-2">
+    <reporter-print-layout></reporter-print-layout>
+  </div>
+
+  <!--layer-->
+  <div class="col-12 my-2">
+    <h2 class="border-bottom mb-3 mt-3">Layers</h2>
+    <div class="row">
+
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <h3>Data</h3>
+          <div>
+            <mat-checkbox class="example-margin">SRI</mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="example-margin">SRI Ajusted</mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="example-margin">VMI</mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="example-margin">Heavy Rain Warning</mat-checkbox>
+          </div>
+          <div>
+            <mat-checkbox class="example-margin">Snow Counter</mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <reporter-warning-pluvio></reporter-warning-pluvio>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <reporter-warning-idro></reporter-warning-idro>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-6 col-xl-3 mb-2">
+        <div class="col-wrapper p-3">
+          <reporter-img-uploader></reporter-img-uploader>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

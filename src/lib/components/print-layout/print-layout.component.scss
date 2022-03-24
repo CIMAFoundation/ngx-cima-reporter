@@ -1,0 +1,25 @@
+.layout-wrapper {
+  .img-layout {
+    height: 140px;
+    cursor: pointer;
+  }
+  .selection-bullet {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: lightgray;
+  }
+  &.selected {
+    .selection-bullet {
+      background-color: #007dfc;
+    }
+  }
+  &:hover {
+    .selection-bullet {
+      outline: 3px solid rgba(211, 211, 211, 0.60);
+    }
+  }
+}
+
+
+
