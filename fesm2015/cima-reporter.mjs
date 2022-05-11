@@ -344,7 +344,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.0", ngImpor
 const REPORTER_CONFIG = {
     name: 'reporter',
     description: 'Reporter',
-    version: "0.0.1",
+    version: "0.1.10",
 };
 
 const routes = [
