@@ -1,13 +1,32 @@
-import { OnInit } from '@angular/core';
-import { FakeDataService } from "../../services/fake-data.service";
+import { EventEmitter, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { SnackbarService } from '@cima/commons';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MiddleReport, WarningAggregation } from '../../models/interfaces';
+import { GeographicService } from '../../services/geographic.service';
+import { ReporterService } from '../../services/reporter.service';
 import * as i0 from "@angular/core";
-export declare class WarningIdroComponent implements OnInit {
-    fakeData: FakeDataService;
-    constructor(fakeData: FakeDataService);
+export declare class WarningIdroComponent implements OnInit, OnChanges {
+    private reportService;
+    private geoService;
+    private snackBar;
+    disabled: boolean;
+    report: MiddleReport;
+    warningChange: EventEmitter<any[]>;
+    aggrWarning$: Observable<WarningAggregation[]>;
+    private view;
+    disabled$: BehaviorSubject<boolean>;
+    private viewSubscription;
+    constructor(reportService: ReporterService, geoService: GeographicService, snackBar: SnackbarService);
+    ngOnChanges(changes: SimpleChanges): void;
     ngOnInit(): void;
+    private changeControlStatus;
+    private updateControlStatus;
     warningsIdro: any;
+    resetWarningIdro(): void;
     addWarningIdro(): void;
     delWarningIdro(item: any): void;
+    private updateWarningLayers;
+    selectAggregation(aggr: string, warning: any): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<WarningIdroComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<WarningIdroComponent, "reporter-warning-idro", never, {}, {}, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<WarningIdroComponent, "reporter-warning-idro", never, { "disabled": "disabled"; "report": "report"; }, { "warningChange": "warningChange"; }, never, never>;
 }

@@ -1,0 +1,30 @@
+import { AfterViewInit, EventEmitter, OnInit } from '@angular/core';
+import * as L from 'leaflet';
+import 'leaflet-draw';
+import { GeographicService } from '../../services/geographic.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ReporterService } from '../../services/reporter.service';
+import * as i0 from "@angular/core";
+export declare class MapComponentComponent implements OnInit, AfterViewInit {
+    private reportService;
+    private geoService;
+    private dialog;
+    selected: EventEmitter<any[]>;
+    map: L.Map;
+    mapLoading: boolean;
+    selectedFeautures: any[];
+    private featuresStyle;
+    view: any;
+    constructor(reportService: ReporterService, geoService: GeographicService, dialog: MatDialog);
+    private initDrawTool;
+    private initMap;
+    ngAfterViewInit(): void;
+    resetView(): void;
+    private _setView;
+    setView(): void;
+    private updateSelected;
+    private loadFeautures;
+    ngOnInit(): void;
+    static ɵfac: i0.ɵɵFactoryDeclaration<MapComponentComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<MapComponentComponent, "app-map-component", never, {}, { "selected": "selected"; }, never, never>;
+}

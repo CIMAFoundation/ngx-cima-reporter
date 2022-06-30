@@ -1,13 +1,32 @@
-import { OnInit } from '@angular/core';
-import { FakeDataService } from "../../services/fake-data.service";
+import { EventEmitter, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { SnackbarService } from '@cima/commons';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { MiddleReport, WarningAggregation } from '../../models/interfaces';
+import { GeographicService } from '../../services/geographic.service';
+import { ReporterService } from '../../services/reporter.service';
 import * as i0 from "@angular/core";
-export declare class WarningPluvioComponent implements OnInit {
-    fakeData: FakeDataService;
-    constructor(fakeData: FakeDataService);
+export declare class WarningPluvioComponent implements OnInit, OnChanges {
+    private reportService;
+    private geoService;
+    private snackBar;
+    disabled: boolean;
+    report: MiddleReport;
+    warningChange: EventEmitter<any[]>;
+    aggrWarning$: Observable<WarningAggregation[]>;
+    private view;
+    private viewSubscription;
+    disabled$: BehaviorSubject<boolean>;
+    constructor(reportService: ReporterService, geoService: GeographicService, snackBar: SnackbarService);
+    ngOnChanges(changes: SimpleChanges): void;
     ngOnInit(): void;
+    private changeControlStatus;
+    private updateControlStatus;
     warningsPluvio: any;
+    resetWarningPluvio(): void;
     addWarningPluvio(): void;
     delWarningPluvio(item: any): void;
+    private updateWarningLayers;
+    selectAggregation(aggr: string, warning: any): void;
     static ɵfac: i0.ɵɵFactoryDeclaration<WarningPluvioComponent, never>;
-    static ɵcmp: i0.ɵɵComponentDeclaration<WarningPluvioComponent, "reporter-warning-pluvio", never, {}, {}, never, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<WarningPluvioComponent, "reporter-warning-pluvio", never, { "disabled": "disabled"; "report": "report"; }, { "warningChange": "warningChange"; }, never, never>;
 }

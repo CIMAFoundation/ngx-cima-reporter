@@ -8,5 +8,6 @@ export * from './lib/components/print-layout/print-layout.component';
 export * from './lib/components/img-uploader/img-uploader.component';
 export * from './lib/components/warning-pluvio/warning-pluvio.component';
 export * from './lib/components/warning-idro/warning-idro.component';
+export * from './lib/components/map-component/map-component.component';
 export * from './lib/reporter.config';
 export * from './lib/reporter.module';
