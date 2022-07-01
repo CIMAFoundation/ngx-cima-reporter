@@ -1,9 +1,10 @@
 {
   "name": "@cima/reporter",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "peerDependencies": {
     "@angular/common": "^13.0.0",
-    "@angular/core": "^13.0.0"
+    "@angular/core": "^13.0.0",
+    "leaflet-draw": "^1.0.4"
   },
   "dependencies": {
     "tslib": "^2.3.0"

@@ -257,7 +257,8 @@ class ReporterService {
     }
     getAncillaryLayer(idlayer) {
         // https://dds.cimafoundation.org/sentinel/sentinelapi/aggr/layer/regions_it/
-        return this.http.get('https://dds.cimafoundation.org/sentinel/sentinelapi/aggr/layer/' + idlayer + '/');
+        return this.execute_get(idlayer + '_geometry/');
+        //return this.http.get('https://dds.cimafoundation.org/sentinel/sentinelapi/aggr/layer/'+idlayer+'/');
     }
 }
 ReporterService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: ReporterService, deps: [{ token: 'env' }, { token: i1.HttpClient }], target: i0.ɵɵFactoryTarget.Injectable });
@@ -353,7 +354,9 @@ class MapComponentComponent {
         }).addTo(this.map);
         this.map.fitBounds([[36.619987291, 6.7499552751], [47.1153931748, 18.4802470232]]);
         //this.initDrawTool();
-        this.map.invalidateSize(true);
+        setTimeout(() => {
+            this.map.invalidateSize(true);
+        }, 200);
         this._setView();
     }
     ngAfterViewInit() {
@@ -367,15 +370,11 @@ class MapComponentComponent {
             lon: this.map.getCenter().lng,
             lat: this.map.getCenter().lat,
             zoom: this.map.getZoom(),
-            bbox: this.map.getBounds()
+            bbox: this.map.getBounds().pad(-0.1),
         };
-        console.log(this.view.bbox.toBBoxString());
         this.geoService.setViews(this.view);
     }
     setView() {
-        /*    if (this.view !== undefined && !confirm('Procedendo alcuni parametri basati sul ritaglio verrano resettati. Vuoi procedere?')){
-              this.resetView();
-            } else this._setView();*/
         const dialogData = new ConfirmDialogModel($localize `Conferma operazione`, $localize `Procedendo alcuni parametri basati sul ritaglio verrano resettati. Vuoi procedere?`);
         const dialogRef = this.dialog.open(ConfirmDialogComponent, {
             data: dialogData,
@@ -383,6 +382,7 @@ class MapComponentComponent {
         dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 this._setView();
+                console.log('setview', this.view);
             }
             else {
                 this.resetView();
@@ -431,17 +431,17 @@ class MapComponentComponent {
         }).addTo(this.map);
     }
     ngOnInit() {
-        this.reportService.getAncillaryLayer('regions_it').subscribe(data => {
+        this.reportService.getAncillaryLayer('regions').subscribe(data => {
             console.log(data);
             this.loadFeautures(data);
         });
     }
 }
 MapComponentComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: MapComponentComponent, deps: [{ token: ReporterService }, { token: GeographicService }, { token: i3.MatDialog }], target: i0.ɵɵFactoryTarget.Component });
-MapComponentComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: MapComponentComponent, selector: "app-map-component", outputs: { selected: "selected" }, ngImport: i0, template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\"></div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px}\n"], components: [{ type: i7.MatButton, selector: "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", inputs: ["disabled", "disableRipple", "color"], exportAs: ["matButton"] }] });
+MapComponentComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: MapComponentComponent, selector: "app-map-component", outputs: { selected: "selected" }, ngImport: i0, template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\">\n  <div class=\"crop-overlay\">\n    <div class=\"text-map-overlay\">AREA SELEZIONATA</div>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:10%;top:10%;right:10%;bottom:10%;border:2px solid red;z-index:410;color:#fff;border-radius:4px}.crop-overlay .text-map-overlay{background-color:red;border-radius:4px 4px 0 0;transform:translateY(-100%);width:-moz-fit-content;width:fit-content;padding:5px}\n"], components: [{ type: i7.MatButton, selector: "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", inputs: ["disabled", "disableRipple", "color"], exportAs: ["matButton"] }] });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: MapComponentComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'app-map-component', template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\"></div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px}\n"] }]
+            args: [{ selector: 'app-map-component', template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\">\n  <div class=\"crop-overlay\">\n    <div class=\"text-map-overlay\">AREA SELEZIONATA</div>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:10%;top:10%;right:10%;bottom:10%;border:2px solid red;z-index:410;color:#fff;border-radius:4px}.crop-overlay .text-map-overlay{background-color:red;border-radius:4px 4px 0 0;transform:translateY(-100%);width:-moz-fit-content;width:fit-content;padding:5px}\n"] }]
         }], ctorParameters: function () { return [{ type: ReporterService }, { type: GeographicService }, { type: i3.MatDialog }]; }, propDecorators: { selected: [{
                 type: Output
             }] } });
@@ -1240,7 +1240,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImpo
 const REPORTER_CONFIG = {
     name: 'reporter',
     description: 'Reporter',
-    version: "0.1.11",
+    version: "0.1.12",
 };
 
 const routes = [
