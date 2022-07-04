@@ -566,7 +566,8 @@ class WarningPluvioComponent {
         this.updateControlStatus(true);
         this.reportService.getWarning({
             aggregation: aggr, type: 'national_PLUVIOMETRO', date_to: this.report.toUTCSecond,
-            lon: this.view.lon, lat: this.view.lat, zoom: this.view.zoom
+            lon_min: this.view.bbox.getWest(), lon_max: this.view.bbox.getEast(),
+            lat_min: this.view.bbox.getSouth(), lat_max: this.view.bbox.getNorth()
         })
             .pipe(finalize(() => this.updateControlStatus(false)))
             .subscribe(data => {
@@ -651,11 +652,13 @@ class WarningIdroComponent {
     }
     selectAggregation(aggr, warning) {
         this.disabled$.next(true);
+        // lon: this.view.lon, lat: this.view.lat, zoom: this.view.zoom
         this.reportService.getWarning({
             aggregation: aggr,
             type: 'national_IDROMETRO',
             date_to: this.report.toUTCSecond,
-            lon: this.view.lon, lat: this.view.lat, zoom: this.view.zoom
+            lon_min: this.view.bbox.getWest(), lon_max: this.view.bbox.getEast(),
+            lat_min: this.view.bbox.getSouth(), lat_max: this.view.bbox.getNorth()
         })
             .pipe(finalize(() => this.disabled$.next(false)))
             .subscribe(data => {
@@ -792,9 +795,8 @@ class PrevSituationComponent {
             to: this.previousReport.toUTCSecond,
             description: '',
             cumul: cumValue,
-            lon: this.view.lon,
-            lat: this.view.lat,
-            zoom: this.view.zoom
+            lon_min: this.view.bbox.getWest(), lon_max: this.view.bbox.getEast(),
+            lat_min: this.view.bbox.getSouth(), lat_max: this.view.bbox.getNorth()
         };
         this.mapDisabled.next(true);
         this.reporterService.printMap(mapParameter)
@@ -998,9 +1000,8 @@ class CurrentSituationComponent {
                 to: this.currentReport.toUTCSecond,
                 description: map.description,
                 cumul: 3,
-                lon: this.view.lon,
-                lat: this.view.lat,
-                zoom: this.view.zoom
+                lon_min: this.view.bbox.getWest(), lon_max: this.view.bbox.getEast(),
+                lat_min: this.view.bbox.getSouth(), lat_max: this.view.bbox.getNorth()
             };
             this.mapDisabled.next(true);
             this.reportService.printMap(mapParameter)
@@ -1254,7 +1255,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImpo
 const REPORTER_CONFIG = {
     name: 'reporter',
     description: 'Reporter',
-    version: "0.1.12",
+    version: "0.1.13",
 };
 
 const routes = [

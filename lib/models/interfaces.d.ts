@@ -55,9 +55,10 @@ export interface Aggregation {
     aggregation: string;
     type: string;
     date_to: number;
-    lon: number;
-    lat: number;
-    zoom: number;
+    lat_min: number;
+    lat_max: number;
+    lon_min: number;
+    lon_max: number;
 }
 export interface MapParameter {
     layer: string;
@@ -65,9 +66,10 @@ export interface MapParameter {
     to: number;
     description: string;
     cumul: number;
-    lon: number;
-    lat: number;
-    zoom: number;
+    lat_min: number;
+    lat_max: number;
+    lon_min: number;
+    lon_max: number;
 }
 export interface Cumul {
     descr: string;
