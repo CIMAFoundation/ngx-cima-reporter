@@ -1319,7 +1319,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImpo
 const REPORTER_CONFIG = {
     name: 'reporter',
     description: 'Reporter',
-    version: "0.1.14",
+    version: "0.1.15",
 };
 
 const routes = [
