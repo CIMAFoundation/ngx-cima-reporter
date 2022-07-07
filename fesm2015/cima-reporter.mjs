@@ -1,6 +1,6 @@
 import * as i0 from '@angular/core';
 import { Injectable, Inject, EventEmitter, Component, Output, Input, NgModule } from '@angular/core';
-import { of, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { map, finalize } from 'rxjs/operators';
 import * as i1 from '@angular/common/http';
 import { __decorate } from 'tslib';
@@ -12,13 +12,13 @@ import { ConfirmDialogModel, ConfirmDialogComponent, APP_CONFIG, CimaCommonsModu
 import * as L from 'leaflet';
 import 'leaflet-draw';
 import * as i3 from '@angular/material/dialog';
-import * as i7 from '@angular/material/button';
+import * as i8 from '@angular/common';
+import { CommonModule } from '@angular/common';
 import * as i5 from '@angular/material/input';
 import * as i14 from '@angular/forms';
 import { FormsModule } from '@angular/forms';
+import * as i7 from '@angular/material/button';
 import * as i4$1 from '@angular/material/slide-toggle';
-import * as i8 from '@angular/common';
-import { CommonModule } from '@angular/common';
 import * as i5$1 from '@angular/material/select';
 import * as i6 from '@angular/material/core';
 import * as i13 from '@angular/material/checkbox';
@@ -75,10 +75,54 @@ class PrintLayout {
     }
 }
 
+let GeographicService = class GeographicService {
+    //TODOO AGGIUNGERE RITAGLIO GEOGRAFICO
+    constructor() {
+        this.lock = false;
+        this.selectedFeatures = new BehaviorSubject([]);
+        this.currentViews = new BehaviorSubject(undefined);
+    }
+    lockView() {
+        this.lock = true;
+    }
+    unlockView() {
+        this.lock = false;
+    }
+    setViews(view) {
+        this.lock = false;
+        this.currentViews.next(view);
+    }
+    setFeatures(features) {
+        this.selectedFeatures.next(features);
+    }
+    onFeaturesChange() {
+        return this.selectedFeatures.asObservable();
+    }
+    onViewCange() {
+        return this.currentViews.asObservable();
+    }
+    isLocked() {
+        return this.lock;
+    }
+};
+GeographicService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
+GeographicService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, providedIn: 'root' });
+GeographicService = __decorate([
+    UntilDestroy()
+], GeographicService);
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, decorators: [{
+            type: Injectable,
+            args: [{
+                    providedIn: 'root',
+                }]
+        }], ctorParameters: function () { return []; } });
+
 class ReporterService {
-    constructor(env, http) {
+    constructor(env, http, geoService) {
         this.env = env;
         this.http = http;
+        this.geoService = geoService;
+        this.bboxSet = false;
     }
     backend_url(relPath) {
         //https://acroweb3-portal-backend-test.cimafoundation.org/reporter/api/
@@ -105,6 +149,7 @@ class ReporterService {
      * @returns
      */
     getWarning(aggregation) {
+        this.geoService.lockView();
         return this.execute_post('aggregation_warning/', aggregation).pipe(map((data) => {
             return data;
         }, (error) => {
@@ -141,6 +186,7 @@ class ReporterService {
      * @returns Layer (json)
      */
     printMap(mapParameters) {
+        this.geoService.lockView();
         return this.execute_post('print_map/', mapParameters);
     }
     /**
@@ -261,7 +307,7 @@ class ReporterService {
         //return this.http.get('https://dds.cimafoundation.org/sentinel/sentinelapi/aggr/layer/'+idlayer+'/');
     }
 }
-ReporterService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: ReporterService, deps: [{ token: 'env' }, { token: i1.HttpClient }], target: i0.ɵɵFactoryTarget.Injectable });
+ReporterService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: ReporterService, deps: [{ token: 'env' }, { token: i1.HttpClient }, { token: GeographicService }], target: i0.ɵɵFactoryTarget.Injectable });
 ReporterService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: ReporterService, providedIn: 'root' });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: ReporterService, decorators: [{
             type: Injectable,
@@ -272,45 +318,15 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImpo
         return [{ type: undefined, decorators: [{
                         type: Inject,
                         args: ['env']
-                    }] }, { type: i1.HttpClient }];
+                    }] }, { type: i1.HttpClient }, { type: GeographicService }];
     } });
 
-let GeographicService = class GeographicService {
-    //TODOO AGGIUNGERE RITAGLIO GEOGRAFICO
-    constructor() {
-        this.selectedFeatures = new BehaviorSubject([]);
-        this.currentViews = new BehaviorSubject(undefined);
-    }
-    setViews(view) {
-        this.currentViews.next(view);
-    }
-    setFeatures(features) {
-        this.selectedFeatures.next(features);
-    }
-    onFeaturesChange() {
-        return this.selectedFeatures.asObservable();
-    }
-    onViewCange() {
-        return this.currentViews.asObservable();
-    }
-};
-GeographicService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, deps: [], target: i0.ɵɵFactoryTarget.Injectable });
-GeographicService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, providedIn: 'root' });
-GeographicService = __decorate([
-    UntilDestroy()
-], GeographicService);
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: GeographicService, decorators: [{
-            type: Injectable,
-            args: [{
-                    providedIn: 'root',
-                }]
-        }], ctorParameters: function () { return []; } });
-
 class MapComponentComponent {
-    constructor(reportService, geoService, dialog) {
+    constructor(reportService, geoService, dialog, _ref) {
         this.reportService = reportService;
         this.geoService = geoService;
         this.dialog = dialog;
+        this._ref = _ref;
         this.selected = new EventEmitter();
         this.mapLoading = false;
         this.selectedFeautures = [];
@@ -334,32 +350,93 @@ class MapComponentComponent {
                 fillOpacity: 0.4
             }
         };
-        this.view = undefined;
+        this.view = {};
     }
     initDrawTool() {
         var drawnItems = new L.FeatureGroup();
         this.map.addLayer(drawnItems);
         var drawControl = new L.Control.Draw({
+            draw: {
+                polyline: false,
+                circle: false,
+                polygon: false,
+                marker: false,
+                circlemarker: false,
+                rectangle: {}
+            },
             edit: {
-                featureGroup: drawnItems
+                featureGroup: drawnItems,
             }
         });
         this.map.addControl(drawControl);
+        this.map.on(L.Draw.Event.DRAWSTOP, (e) => {
+            if (drawnItems.getLayers().length == 0) {
+                drawnItems.addLayer(L.rectangle(this.view.bbox));
+            }
+        });
+        this.map.on(L.Draw.Event.CREATED, (e) => {
+            drawnItems.addLayer(e.layer);
+            this.canSetBounding().subscribe(result => {
+                if (result) {
+                    this.setView(e.layer.getBounds());
+                    this.reportService.bboxSet = true;
+                    this._ref.markForCheck();
+                }
+                else {
+                    e.layer.setBounds(this.view.bbox);
+                }
+            });
+        });
+        this.map.on(L.Draw.Event.EDITED, (e) => {
+            this.canSetBounding().subscribe(result => {
+                if (result) {
+                    this.setView(e.layers.getLayers()[0].getBounds());
+                }
+                else {
+                    e.layers.getLayers()[0].setBounds(this.view.bbox);
+                }
+            });
+        });
+        this.map.on(L.Draw.Event.DELETED, (e) => {
+            this.canSetBounding().subscribe(result => {
+                if (result) {
+                    this.setView(undefined);
+                    this.reportService.bboxSet = false;
+                    this._ref.markForCheck();
+                }
+                else {
+                    drawnItems.addLayer(e.layers.getLayers()[0]);
+                }
+            });
+        });
+        this.map.on(L.Draw.Event.DRAWSTART, (e) => {
+            drawnItems.clearLayers();
+        });
+    }
+    canSetBounding() {
+        const dialogData = new ConfirmDialogModel($localize `Conferma operazione`, $localize `Procedendo alcuni parametri basati sul ritaglio verrano resettati. Vuoi procedere?`);
+        if (this.geoService.isLocked()) {
+            return this.dialog.open(ConfirmDialogComponent, {
+                data: dialogData,
+            }).afterClosed();
+        }
+        else
+            return of(true);
     }
     initMap() {
         this.mapLoading = true;
-        this.map = L.map('main_map').setView([0, 0], 1);
-        ;
+        this.map = L.map('main_map', { scrollWheelZoom: false }).setView([0, 0], 1);
         //6.7499552751, 36.619987291, 18.4802470232, 47.1153931748
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(this.map);
         this.map.fitBounds([[36.619987291, 6.7499552751], [47.1153931748, 18.4802470232]]);
-        //this.initDrawTool();
+        this.initDrawTool();
         setTimeout(() => {
             this.map.invalidateSize(true);
+            window.dispatchEvent(new Event('resize'));
         }, 200);
-        this._setView();
+        this.setView();
     }
     ngAfterViewInit() {
         this.initMap();
@@ -367,29 +444,14 @@ class MapComponentComponent {
     resetView() {
         this.map.flyTo([this.view.lat, this.view.lon], this.view.zoom);
     }
-    _setView() {
+    setView(bounding) {
         this.view = {
             lon: this.map.getCenter().lng,
             lat: this.map.getCenter().lat,
             zoom: this.map.getZoom(),
-            bbox: this.map.getBounds().pad(-0.1),
+            bbox: bounding
         };
         this.geoService.setViews(this.view);
-    }
-    setView() {
-        const dialogData = new ConfirmDialogModel($localize `Conferma operazione`, $localize `Procedendo alcuni parametri basati sul ritaglio verrano resettati. Vuoi procedere?`);
-        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-            data: dialogData,
-        });
-        dialogRef.afterClosed().subscribe((dialogResult) => {
-            if (dialogResult) {
-                this._setView();
-                console.log('setview', this.view);
-            }
-            else {
-                this.resetView();
-            }
-        });
     }
     updateSelected() {
         var sels = [];
@@ -439,12 +501,12 @@ class MapComponentComponent {
         });
     }
 }
-MapComponentComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: MapComponentComponent, deps: [{ token: ReporterService }, { token: GeographicService }, { token: i3.MatDialog }], target: i0.ɵɵFactoryTarget.Component });
-MapComponentComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: MapComponentComponent, selector: "app-map-component", outputs: { selected: "selected" }, ngImport: i0, template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\">\n  <div class=\"crop-overlay\">\n    <div class=\"text-map-overlay\">AREA SELEZIONATA</div>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:10%;top:10%;right:10%;bottom:10%;border:2px solid red;z-index:410;color:#fff;border-radius:4px}.crop-overlay .text-map-overlay{background-color:red;border-radius:4px 4px 0 0;transform:translateY(-100%);width:-moz-fit-content;width:fit-content;padding:5px}\n"], components: [{ type: i7.MatButton, selector: "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", inputs: ["disabled", "disableRipple", "color"], exportAs: ["matButton"] }] });
+MapComponentComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: MapComponentComponent, deps: [{ token: ReporterService }, { token: GeographicService }, { token: i3.MatDialog }, { token: i0.ChangeDetectorRef }], target: i0.ɵɵFactoryTarget.Component });
+MapComponentComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: MapComponentComponent, selector: "app-map-component", outputs: { selected: "selected" }, ngImport: i0, template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <!-- <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div> -->\n\n  </div>\n</ng-container>\n\n<div class=\"big-map\" id=\"main_map\">\n   <div class=\"crop-overlay\" *ngIf=\"!view.bbox\">\n     <span><span class=\"fas fa-arrow-left me-2\"></span>Seleziona un ritaglio per proseguire</span>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:58px;top:86px;z-index:410;background-color:red;color:#fff;border-radius:4px;padding:5px;font-size:1.2em}\n"], directives: [{ type: i8.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }] });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: MapComponentComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'app-map-component', template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div>\n\n  </div>\n</ng-container>\n<div class=\"big-map\" id=\"main_map\">\n  <div class=\"crop-overlay\">\n    <div class=\"text-map-overlay\">AREA SELEZIONATA</div>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:10%;top:10%;right:10%;bottom:10%;border:2px solid red;z-index:410;color:#fff;border-radius:4px}.crop-overlay .text-map-overlay{background-color:red;border-radius:4px 4px 0 0;transform:translateY(-100%);width:-moz-fit-content;width:fit-content;padding:5px}\n"] }]
-        }], ctorParameters: function () { return [{ type: ReporterService }, { type: GeographicService }, { type: i3.MatDialog }]; }, propDecorators: { selected: [{
+            args: [{ selector: 'app-map-component', template: "<ng-container >\n  <div class=\"d-flex justify-content-between align-items-center mb-2\">\n    <h2 class=\"m-0\">Area Geografica di analisi</h2>\n    <!-- <div class=\"d-flex\">\n      <button mat-flat-button color=\"\" [disabled]=\"!view\" (click)=\"resetView()\"class=\"bg-warning me-2\">\n        <span class=\"fas fa-redo-alt me-2\"></span>Ripristina\n      </button>\n      <button mat-flat-button color=\"primary\" class=\"bg-success\" (click)=\"setView()\">\n        <span class=\"fas fa-crop me-2\"></span>Imposta ritaglio\n      </button>\n    </div> -->\n\n  </div>\n</ng-container>\n\n<div class=\"big-map\" id=\"main_map\">\n   <div class=\"crop-overlay\" *ngIf=\"!view.bbox\">\n     <span><span class=\"fas fa-arrow-left me-2\"></span>Seleziona un ritaglio per proseguire</span>\n  </div>\n</div>\n", styles: [":root{--bg-light-color: $bg-light-color;--bg-light-dark-color: $bg-light-dark-color;--bg-active-color: $bg-active-color;--border-color: $border-color}.big-map{width:100%;height:calc(100vh - 409px);z-index:1;min-height:400px;position:relative}.crop-overlay{position:absolute;left:58px;top:86px;z-index:410;background-color:red;color:#fff;border-radius:4px;padding:5px;font-size:1.2em}\n"] }]
+        }], ctorParameters: function () { return [{ type: ReporterService }, { type: GeographicService }, { type: i3.MatDialog }, { type: i0.ChangeDetectorRef }]; }, propDecorators: { selected: [{
                 type: Output
             }] } });
 
@@ -841,6 +903,8 @@ class PrevSituationComponent {
         stationlist.push(...listitem.filter(itm => itm.selected));
     }
     loadStations() {
+        this.pluvioStations = [];
+        this.hydroStations = [];
         if (this.selectedFeatures.length > 0 || (this.view && this.view.bbox)) {
             this.reporterService.getPluvio(this.selectedFeatures, this.previousReport.toUTCSecond, this.pluvioCum, this.view.bbox).subscribe(data => {
                 console.log('stations', data);
@@ -1223,10 +1287,10 @@ class HomeComponent {
     }
 }
 HomeComponent.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: HomeComponent, deps: [{ token: ReporterService }, { token: GeographicService }], target: i0.ɵɵFactoryTarget.Component });
-HomeComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: HomeComponent, selector: "cima-home", ngImport: i0, template: "<mat-stepper #stepper [linear]=\"true\">\n\n  <!--lasciare numero al posto dell'icona-->\n  <ng-template matStepperIcon=\"edit\" let-index=\"index\">\n    {{index +1}}\n  </ng-template>\n\n  <!--STEP 1-->\n  <mat-step>\n      <ng-template matStepLabel>Inizializzazione </ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-initialization [(report)]=\"report\"></reporter-initialization>\n      </div>\n\n      <div class=\"d-flex justify-content-end\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n\n    </div>\n  </mat-step>\n\n\n  <!--STEP 2-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Pregressa</ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-prev-situation [(previousReport)]=\"report.prevReport\"></reporter-prev-situation>\n      </div>\n\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n\n  <!--STEP 3-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Attuale</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n       <reporter-current-situation [(currentReport)]=\"report.currReport\"></reporter-current-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n  <!--STEP 4-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Prevista</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n        <reporter-expected-situation [(forecastReport)]=\"report.foreReport\"></reporter-expected-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2 bg-success\" (click)=\"createReport()\">\n          Genera Report\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n</mat-stepper>\n", styles: [".stepper-content-wrapper{padding:1em 0}.stepper-content{padding:1em}.map-container{border-radius:5px;overflow:hidden}:host ::ng-deep .angular-editor-wrapper{background-color:#f5f5f5;border-radius:5px 5px 0 0}:host ::ng-deep .mat-button-wrapper{display:flex;align-items:center}\n"], components: [{ type: i3$2.MatStepper, selector: "mat-stepper, mat-vertical-stepper, mat-horizontal-stepper, [matStepper]", inputs: ["selectedIndex", "disableRipple", "color", "labelPosition"], outputs: ["animationDone"], exportAs: ["matStepper", "matVerticalStepper", "matHorizontalStepper"] }, { type: i3$2.MatStep, selector: "mat-step", inputs: ["color"], exportAs: ["matStep"] }, { type: InitializationComponent, selector: "reporter-initialization", inputs: ["report"], outputs: ["reportChange"] }, { type: i7.MatButton, selector: "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", inputs: ["disabled", "disableRipple", "color"], exportAs: ["matButton"] }, { type: PrevSituationComponent, selector: "reporter-prev-situation", inputs: ["previousReport"], outputs: ["previousReportChange"] }, { type: CurrentSituationComponent, selector: "reporter-current-situation", inputs: ["currentReport"], outputs: ["currentReportChange"] }, { type: ExpectedSituationComponent, selector: "reporter-expected-situation", inputs: ["forecastReport"], outputs: ["forecastReportChange"] }], directives: [{ type: i3$2.MatStepperIcon, selector: "ng-template[matStepperIcon]", inputs: ["matStepperIcon"] }, { type: i3$2.MatStepLabel, selector: "[matStepLabel]" }, { type: i3$2.MatStepperNext, selector: "button[matStepperNext]", inputs: ["type"] }, { type: i3$2.MatStepperPrevious, selector: "button[matStepperPrevious]", inputs: ["type"] }] });
+HomeComponent.ɵcmp = i0.ɵɵngDeclareComponent({ minVersion: "12.0.0", version: "13.3.11", type: HomeComponent, selector: "cima-home", ngImport: i0, template: "<mat-stepper #stepper [linear]=\"true\">\n\n  <!--lasciare numero al posto dell'icona-->\n  <ng-template matStepperIcon=\"edit\" let-index=\"index\">\n    {{index +1}}\n  </ng-template>\n\n  <!--STEP 1-->\n  <mat-step>\n      <ng-template matStepLabel>Inizializzazione </ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-initialization [(report)]=\"report\"></reporter-initialization>\n      </div>\n\n      <div class=\"d-flex justify-content-end align-items-center\">\n        <span class=\"me-2 text-danger\" *ngIf=\"!reporterService.bboxSet\">E' necessario impostare un ritaglio per proseguire</span>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext [disabled]=\"!reporterService.bboxSet\n\">\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n\n    </div>\n  </mat-step>\n\n\n  <!--STEP 2-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Pregressa</ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-prev-situation [(previousReport)]=\"report.prevReport\"></reporter-prev-situation>\n      </div>\n\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n\n  <!--STEP 3-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Attuale</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n       <reporter-current-situation [(currentReport)]=\"report.currReport\"></reporter-current-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n  <!--STEP 4-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Prevista</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n        <reporter-expected-situation [(forecastReport)]=\"report.foreReport\"></reporter-expected-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2 bg-success\" (click)=\"createReport()\">\n          Genera Report\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n</mat-stepper>\n", styles: [".stepper-content-wrapper{padding:1em 0}.stepper-content{padding:1em}.map-container{border-radius:5px;overflow:hidden}:host ::ng-deep .angular-editor-wrapper{background-color:#f5f5f5;border-radius:5px 5px 0 0}:host ::ng-deep .mat-button-wrapper{display:flex;align-items:center}\n"], components: [{ type: i3$2.MatStepper, selector: "mat-stepper, mat-vertical-stepper, mat-horizontal-stepper, [matStepper]", inputs: ["selectedIndex", "disableRipple", "color", "labelPosition"], outputs: ["animationDone"], exportAs: ["matStepper", "matVerticalStepper", "matHorizontalStepper"] }, { type: i3$2.MatStep, selector: "mat-step", inputs: ["color"], exportAs: ["matStep"] }, { type: InitializationComponent, selector: "reporter-initialization", inputs: ["report"], outputs: ["reportChange"] }, { type: i7.MatButton, selector: "button[mat-button], button[mat-raised-button], button[mat-icon-button],             button[mat-fab], button[mat-mini-fab], button[mat-stroked-button],             button[mat-flat-button]", inputs: ["disabled", "disableRipple", "color"], exportAs: ["matButton"] }, { type: PrevSituationComponent, selector: "reporter-prev-situation", inputs: ["previousReport"], outputs: ["previousReportChange"] }, { type: CurrentSituationComponent, selector: "reporter-current-situation", inputs: ["currentReport"], outputs: ["currentReportChange"] }, { type: ExpectedSituationComponent, selector: "reporter-expected-situation", inputs: ["forecastReport"], outputs: ["forecastReportChange"] }], directives: [{ type: i3$2.MatStepperIcon, selector: "ng-template[matStepperIcon]", inputs: ["matStepperIcon"] }, { type: i3$2.MatStepLabel, selector: "[matStepLabel]" }, { type: i8.NgIf, selector: "[ngIf]", inputs: ["ngIf", "ngIfThen", "ngIfElse"] }, { type: i3$2.MatStepperNext, selector: "button[matStepperNext]", inputs: ["type"] }, { type: i3$2.MatStepperPrevious, selector: "button[matStepperPrevious]", inputs: ["type"] }] });
 i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImport: i0, type: HomeComponent, decorators: [{
             type: Component,
-            args: [{ selector: 'cima-home', template: "<mat-stepper #stepper [linear]=\"true\">\n\n  <!--lasciare numero al posto dell'icona-->\n  <ng-template matStepperIcon=\"edit\" let-index=\"index\">\n    {{index +1}}\n  </ng-template>\n\n  <!--STEP 1-->\n  <mat-step>\n      <ng-template matStepLabel>Inizializzazione </ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-initialization [(report)]=\"report\"></reporter-initialization>\n      </div>\n\n      <div class=\"d-flex justify-content-end\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n\n    </div>\n  </mat-step>\n\n\n  <!--STEP 2-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Pregressa</ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-prev-situation [(previousReport)]=\"report.prevReport\"></reporter-prev-situation>\n      </div>\n\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n\n  <!--STEP 3-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Attuale</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n       <reporter-current-situation [(currentReport)]=\"report.currReport\"></reporter-current-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n  <!--STEP 4-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Prevista</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n        <reporter-expected-situation [(forecastReport)]=\"report.foreReport\"></reporter-expected-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2 bg-success\" (click)=\"createReport()\">\n          Genera Report\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n</mat-stepper>\n", styles: [".stepper-content-wrapper{padding:1em 0}.stepper-content{padding:1em}.map-container{border-radius:5px;overflow:hidden}:host ::ng-deep .angular-editor-wrapper{background-color:#f5f5f5;border-radius:5px 5px 0 0}:host ::ng-deep .mat-button-wrapper{display:flex;align-items:center}\n"] }]
+            args: [{ selector: 'cima-home', template: "<mat-stepper #stepper [linear]=\"true\">\n\n  <!--lasciare numero al posto dell'icona-->\n  <ng-template matStepperIcon=\"edit\" let-index=\"index\">\n    {{index +1}}\n  </ng-template>\n\n  <!--STEP 1-->\n  <mat-step>\n      <ng-template matStepLabel>Inizializzazione </ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-initialization [(report)]=\"report\"></reporter-initialization>\n      </div>\n\n      <div class=\"d-flex justify-content-end align-items-center\">\n        <span class=\"me-2 text-danger\" *ngIf=\"!reporterService.bboxSet\">E' necessario impostare un ritaglio per proseguire</span>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext [disabled]=\"!reporterService.bboxSet\n\">\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n\n    </div>\n  </mat-step>\n\n\n  <!--STEP 2-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Pregressa</ng-template>\n    <div class=\"stepper-content-wrapper\">\n\n      <div class=\"stepper-content\">\n        <reporter-prev-situation [(previousReport)]=\"report.prevReport\"></reporter-prev-situation>\n      </div>\n\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n\n  <!--STEP 3-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Attuale</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n       <reporter-current-situation [(currentReport)]=\"report.currReport\"></reporter-current-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperNext>\n          Successivo<span class=\"fas fa-angle-right ms-2\"></span>\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n  <!--STEP 4-->\n  <mat-step>\n    <ng-template matStepLabel>Situazione Prevista</ng-template>\n    <div class=\"stepper-content-wrapper\">\n      <div class=\"stepper-content\">\n        <reporter-expected-situation [(forecastReport)]=\"report.foreReport\"></reporter-expected-situation>\n      </div>\n      <div class=\"d-flex justify-content-between\">\n        <button mat-flat-button color=\"primary\" class=\"me-2\" matStepperPrevious>\n          <span class=\"fas fa-angle-left me-2\"></span>Precedente\n        </button>\n        <button mat-flat-button color=\"primary\" class=\"me-2 bg-success\" (click)=\"createReport()\">\n          Genera Report\n        </button>\n      </div>\n    </div>\n  </mat-step>\n\n</mat-stepper>\n", styles: [".stepper-content-wrapper{padding:1em 0}.stepper-content{padding:1em}.map-container{border-radius:5px;overflow:hidden}:host ::ng-deep .angular-editor-wrapper{background-color:#f5f5f5;border-radius:5px 5px 0 0}:host ::ng-deep .mat-button-wrapper{display:flex;align-items:center}\n"] }]
         }], ctorParameters: function () { return [{ type: ReporterService }, { type: GeographicService }]; } });
 
 class ReporterAppContainerComponent {
@@ -1255,7 +1319,7 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "13.3.11", ngImpo
 const REPORTER_CONFIG = {
     name: 'reporter',
     description: 'Reporter',
-    version: "0.1.13",
+    version: "0.1.14",
 };
 
 const routes = [

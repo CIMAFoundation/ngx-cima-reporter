@@ -2,11 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { CimaEnvironment } from '@cima/commons';
 import { Observable } from 'rxjs';
 import { Aggregation, Cumul, Layer, MapParameter, Report, Station, WarningAggregation } from '../models/interfaces';
+import { GeographicService } from './geographic.service';
 import * as i0 from "@angular/core";
 export declare class ReporterService {
     private env;
     private http;
-    constructor(env: CimaEnvironment, http: HttpClient);
+    private geoService;
+    constructor(env: CimaEnvironment, http: HttpClient, geoService: GeographicService);
+    bboxSet: boolean;
     private backend_url;
     private execute_get;
     private execute_post;

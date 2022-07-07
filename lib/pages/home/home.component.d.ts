@@ -3,7 +3,7 @@ import { GeographicService } from '../../services/geographic.service';
 import { ReporterService } from '../../services/reporter.service';
 import * as i0 from "@angular/core";
 export declare class HomeComponent {
-    private reporterService;
+    reporterService: ReporterService;
     private geoService;
     report: Report;
     loadingReport: boolean;
